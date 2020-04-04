@@ -4,6 +4,7 @@ import { displayMap } from './mapbox';
 import { updateSettings } from './updateSettings';
 import { bookTour } from './stripe';
 import { signup } from './signup';
+import { showAlert } from './alert';
 
 // DOM ELEMENT
 const mapBox = document.getElementById('map');
@@ -81,3 +82,6 @@ if (signupForm)
 
         signup(name, email, password, passwordConfirm);
     });
+
+const alertMessage = document.querySelector('body').dataset.alert;
+if (alertMessage) showAlert('success', alertMessage, 20);
