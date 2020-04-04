@@ -21,6 +21,8 @@ const view = require('./routes/view');
 // START EXPRESS APP
 const app = express();
 
+app.enable('trust proxy');
+
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
