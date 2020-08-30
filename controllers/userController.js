@@ -4,7 +4,7 @@ const _ = require('lodash');
 const User = require('../models/User');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
-const factory = require('../controllers/handlerFactory');
+const factory = require('./handlerFactory');
 
 // const multerStorage = multer.diskStorage({
 //     destination: (req, file, cb) => {
@@ -48,6 +48,7 @@ exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
 });
 
 const filterObj = (obj, ...allowedFields) => {
+    const newObj = {};
     Object.keys(obj).forEach(el => {
         if (allowedFields.includes(el)) newObj[el] = obj[el];
     });
