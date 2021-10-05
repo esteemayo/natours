@@ -1,6 +1,7 @@
 const fs = require('fs');
-const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const mongoose = require('mongoose');
+
 const Tour = require('../../models/Tour');
 const User = require('../../models/User');
 const Review = require('../../models/Review');
