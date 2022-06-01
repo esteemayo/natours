@@ -9,6 +9,7 @@ const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
 const compression = require('compression');
 const cors = require('cors');
+const { StatusCodes } = require('http-status-codes');
 
 // ROUTES
 const AppError = require('./utils/appError');
@@ -49,20 +50,21 @@ app.use(helmet());
 // Developmwent logging
 // console.log(process.env.NODE_ENV);
 if (process.env.NODE_ENV === 'development') {
-    app.use(morgan('dev'));
+  app.use(morgan('dev'));
 }
 
 // Limit request from same API
 const limiter = rateLimit({
-    max: 100,
-    windowMs: 60 * 60 * 1000, // 1 hr
-    message: 'Too many requests from this IP, Please try again in an hour!'
+  max: 100,
+  windowMs: 60 * 60 * 1000, // 1 hr
+  message: 'Too many requests from this IP, Please try again in an hour!',
 });
 app.use('/api', limiter);
 
-app.post('/webhook-checkout',
-    express.raw({ type: 'application/json' }),
-    bookingController.webhookCheckout
+app.post(
+  '/webhook-checkout',
+  express.raw({ type: 'application/json' }),
+  bookingController.webhookCheckout
 );
 
 // Body Parser, reading data from body into req.body
@@ -77,31 +79,33 @@ app.use(mongoSanitize());
 app.use(xss());
 
 // Prevent parameter pollution
-app.use(hpp({
+app.use(
+  hpp({
     whitelist: [
-        'duration',
-        'ratingsQuantity',
-        'ratingAverage',
-        'maxGroupSize',
-        'difficulty',
-        'price'
-    ]
-}));
+      'duration',
+      'ratingsQuantity',
+      'ratingAverage',
+      'maxGroupSize',
+      'difficulty',
+      'price',
+    ],
+  })
+);
 
 app.use(compression());
 
 // Test Middleware
 app.use((req, res, next) => {
-    console.log('Hello from the middleware');
-    next();
+  console.log('Hello from the middleware');
+  next();
 });
 
 // Test Middleware
 app.use((req, res, next) => {
-    req.requestTime = new Date().toISOString();
-    // console.log(req.headers);
-    // console.log(req.cookies);
-    next();
+  req.requestTime = new Date().toISOString();
+  // console.log(req.headers);
+  // console.log(req.cookies);
+  next();
 });
 
 app.use('/', view);
@@ -111,20 +115,25 @@ app.use('/api/v1/reviews', reviews);
 app.use('/api/v1/bookings', booking);
 
 app.all('*', (req, res, next) => {
-    /*
+  /*
     res.status(400).json({
         status: 'fail',
         message: `Can't find ${req.originalUrl} on this server`
     });
     */
 
-    // const err = new Error(`Can't find ${req.originalUrl} on this server`);
-    // err.status = 'fail';
-    // err.statusCode = 404;
+  // const err = new Error(`Can't find ${req.originalUrl} on this server`);
+  // err.status = 'fail';
+  // err.statusCode = 404;
 
-    // next(err);
+  // next(err);
 
-    next(new AppError(`Can't find ${req.originalUrl} on this server`, 404));
+  next(
+    new AppError(
+      `Can't find ${req.originalUrl} on this server`,
+      StatusCodes.NOT_FOUND
+    )
+  );
 });
 
 app.use(globalErrorHandler);

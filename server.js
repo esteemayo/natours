@@ -2,29 +2,32 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 require('colors');
 
-process.on('uncaughtException', err => {
-    console.log('UNCAUGHT EXCEPTION! Shutting down...');
-    console.log(err.name, err.message);
-    process.exit(1);
+process.on('uncaughtException', (err) => {
+  console.log('UNCAUGHT EXCEPTION! Shutting down...');
+  console.log(err.name, err.message);
+  process.exit(1);
 });
 
 dotenv.config({ path: './config.env' });
 const app = require('./app');
 
-const DB = process.env.DATABASE.replace('<PASSWORD>', process.env.DATABASE_PASSWORD);
+const DB = process.env.DATABASE.replace(
+  '<PASSWORD>',
+  process.env.DATABASE_PASSWORD
+);
 
-mongoose.connect(DB, {
+mongoose
+  .connect(DB, {
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: true,
-    useFindAndModify: false
-})
-    .then(con => {
-        // console.log(con.connections);
-        console.log(`MongoDB Connected...${DB}`.blue.bold);
-    })
+    useFindAndModify: false,
+  })
+  .then((con) => {
+    // console.log(con.connections);
+    console.log(`MongoDB Connected...${DB}`.blue.bold);
+  });
 // .catch(err => console.log(`COULD NOT CONNECT TO MONGODB: ${err}`));
-
 
 // console.log(app.get('env'));
 // console.log(process.env);
@@ -32,20 +35,22 @@ mongoose.connect(DB, {
 // START SERVER
 const PORT = process.env.PORT || 3000;
 
-const server = app.listen(PORT, () => console.log(`APP RUNNING ON PORT ${PORT}...`.blue.bold));
+const server = app.listen(PORT, () =>
+  console.log(`APP RUNNING ON PORT ${PORT}...`.blue.bold)
+);
 
-process.on('unhandledRejection', err => {
-    console.log('UNHANDLED REJECTION! Shutting down...');
-    console.log(err.name, err.message);
-    server.close(() => {
-        process.exit(1); // Uncaught exception
-    });
+process.on('unhandledRejection', (err) => {
+  console.log('UNHANDLED REJECTION! Shutting down...');
+  console.log(err.name, err.message);
+  server.close(() => {
+    process.exit(1); // Uncaught exception
+  });
 });
 
 // SIGTERN causes a program to stop running so it doesn't need process.exit(1)
 process.on('SIGTERM', () => {
-    console.log('👏 SIGTERM RECEIVED, Shutting down gracefully');
-    server.close(() => {
-        console.log('🔥 Process terminated!');
-    });
+  console.log('👏 SIGTERM RECEIVED, Shutting down gracefully');
+  server.close(() => {
+    console.log('🔥 Process terminated!');
+  });
 });

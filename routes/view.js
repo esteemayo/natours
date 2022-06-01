@@ -7,10 +7,7 @@ const router = express.Router();
 
 router.use(viewsController.alert);
 
-router.get('/',
-    authController.isLoggedIn,
-    viewsController.getOverview
-);
+router.get('/', authController.isLoggedIn, viewsController.getOverview);
 
 router.get('/tour/:slug', authController.isLoggedIn, viewsController.getTour);
 
@@ -23,6 +20,10 @@ router.get('/me', authController.protect, viewsController.getAccount);
 // router.get('/my-tours', bookingController.createBookingCheckout, authController.protect, viewsController.getMyTour);
 router.get('/my-tours', authController.protect, viewsController.getMyTour);
 
-router.post('/submit-user-data', authController.protect, viewsController.updateUserData);
+router.post(
+  '/submit-user-data',
+  authController.protect,
+  viewsController.updateUserData
+);
 
 module.exports = router;
